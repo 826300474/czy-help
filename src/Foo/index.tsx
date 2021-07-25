@@ -20,11 +20,8 @@ export default ({ title }: { title: string }) => {
 
   const { run } = useRequestPro(getUsername, {
     manual: true,
-    onSuccess: (aaa) => {
-      console.log('onSuccess', aaa.aaa);
-    },
-    onError: (err) => {
-      console.log('onError', err);
+    onSuccess: (data) => {
+      console.log('onSuccess', data);
     },
   }, '配置');
 
