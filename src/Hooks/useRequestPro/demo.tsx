@@ -1,18 +1,18 @@
 import React from 'react';
 import { Button } from 'antd';
 import 'antd/dist/antd.css';
-import useRequestPro from '../Hooks/useRequestPro';
+import useRequestPro from './index';
 
 function getUsername(): Promise<{ success: boolean, data: { aaa: number } }> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve({
-        success: true,
+        success: false,
         data: {
           aaa: 555,
         },
       });
-    }, 1000);
+    }, 500);
   });
 }
 
@@ -21,12 +21,14 @@ export default ({ title }: { title: string }) => {
   const { run } = useRequestPro(getUsername, {
     manual: true,
     onSuccess: (data) => {
-      console.log('onSuccess', data);
+
+    },
+    onError: (err) => {
+
     },
   }, '配置');
 
   return <h1>
     <Button onClick={() => run()}>Button</Button>
-    {title}
   </h1>;
 };

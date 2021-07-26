@@ -21,6 +21,14 @@ import {
 
 let hide: (() => void) | null;
 
+function onTodo(tip?: string, todo?: () => void) {
+  if (tip) {
+    hide?.();
+    hide = null;
+    todo?.();
+  }
+}
+
 function useRequestPro<R = any, P extends any[] = any, U = any, UU extends U = any>(
   service: CombineService<R, P>,
   options: OptionsWithFormat<R, P, U, UU>,
@@ -57,17 +65,20 @@ function useRequestPro<R = any, Item = any, U extends Item = any>(
 
 function useRequestPro(service: any, options: any = {}, tip?: string) {
 
-  const { onSuccess, ...restOptions } = options;
+  const { onSuccess, onError, ...restOptions } = options;
 
   const { run, ...rest } = useRequest(service, {
     ...restOptions,
     onSuccess: (data, params) => {
-      if (tip) {
-        hide?.();
-        hide = null;
+      onTodo(tip, () => {
         message.success(`${tip}成功`);
-      }
-      onSuccess?.(data, params);
+        onSuccess?.(data, params);
+      });
+    },
+    onError: (err, params) => {
+      onTodo(tip, () => {
+        onError(err, params);
+      });
     },
   });
 
