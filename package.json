@@ -23,7 +23,7 @@
     "type": "git",
     "url": "https://github.com/826300474/czy-help.git"
   },
-  "homepage": "https://826300474.github.io/czy-help",
+  "homepage": "https://826300474.github.io/czy-help/",
   "author": "czy",
   "lint-staged": {
     "*.{js,jsx,less,md,json}": [
