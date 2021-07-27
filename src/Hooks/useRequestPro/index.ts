@@ -29,43 +29,56 @@ function onTodo(tip?: string, todo?: () => void) {
   }
 }
 
-function useRequestPro<R = any, P extends any[] = any, U = any, UU extends U = any>(
+type ResultWithData<T = any> = { data?: T; [key: string]: any };
+
+function useRequestPro<
+  R = any,
+  P extends any[] = any,
+  U = any,
+  UU extends U = any,
+>(
   service: CombineService<R, P>,
   options: OptionsWithFormat<R, P, U, UU>,
   tip?: string,
 ): BaseResult<U, P>;
 
-function useRequestPro<R = any, P extends any[] = any>(
+function useRequestPro<R extends ResultWithData = any, P extends any[] = any>(
   service: CombineService<R, P>,
-  options?: BaseOptions<R, P>,
+  options?: BaseOptions<R['data'], P>,
   tip?: string,
-): BaseResult<R, P>;
+): BaseResult<R['data'], P>;
 
-function useRequestPro<R extends LoadMoreFormatReturn, RR>(
+function useRequestPro<R extends LoadMoreFormatReturn = any, RR = any>(
   service: CombineService<RR, LoadMoreParams<R>>,
   options: LoadMoreOptionsWithFormat<R, RR>,
   tip?: string,
 ): LoadMoreResult<R>;
-function useRequestPro<R extends LoadMoreFormatReturn, RR extends R>(
-  service: CombineService<R, LoadMoreParams<R>>,
-  options: LoadMoreOptions<RR>,
+function useRequestPro<
+  R extends ResultWithData<LoadMoreFormatReturn | any> = any,
+  RR extends R = any,
+>(
+  service: CombineService<R, LoadMoreParams<R['data']>>,
+  options: LoadMoreOptions<RR['data']>,
   tip?: string,
-): LoadMoreResult<R>;
+): LoadMoreResult<R['data']>;
 
 function useRequestPro<R = any, Item = any, U extends Item = any>(
   service: CombineService<R, PaginatedParams>,
   options: PaginatedOptionsWithFormat<R, Item, U>,
   tip?: string,
 ): PaginatedResult<Item>;
-function useRequestPro<R = any, Item = any, U extends Item = any>(
-  service: CombineService<PaginatedFormatReturn<Item>, PaginatedParams>,
+
+function useRequestPro<Item = any, U extends Item = any>(
+  service: CombineService<
+    ResultWithData<PaginatedFormatReturn<Item>>,
+    PaginatedParams
+  >,
   options: BasePaginatedOptions<U>,
   tip?: string,
 ): PaginatedResult<Item>;
 
 function useRequestPro(service: any, options: any = {}, tip?: string) {
-
-  const { onSuccess, onError, ...restOptions } = options;
+  const { onSuccess, onError, formatResult, ...restOptions } = options;
 
   const { run, ...rest } = useRequest(service, {
     ...restOptions,
@@ -77,7 +90,7 @@ function useRequestPro(service: any, options: any = {}, tip?: string) {
     },
     onError: (err, params) => {
       onTodo(tip, () => {
-        onError(err, params);
+        onError?.(err, params);
       });
     },
   });
@@ -87,7 +100,7 @@ function useRequestPro(service: any, options: any = {}, tip?: string) {
       if (tip && !hide) {
         hide = message.loading(`正在${tip}`);
       }
-      run(args);
+      run(...args);
     },
     ...rest,
   };
