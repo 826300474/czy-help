@@ -34,9 +34,10 @@
     ]
   },
   "dependencies": {
+    "@ahooksjs/use-request": "^2.8.10",
     "antd": "^4.7.0",
-    "react": "^16.12.0",
-    "@ahooksjs/use-request": "^2.8.10"
+    "lodash": "^4.17.21",
+    "react": "^16.12.0"
   },
   "devDependencies": {
     "@umijs/test": "^3.0.5",
